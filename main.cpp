@@ -29,24 +29,31 @@ int main() {
     std::function<long long(std::string&&)> converter = [](std::string&& str){return stoll(str);};
     begin = input(verifer_begin, converter, "Введите начало диапазона: ", "Допущена ошибка, повторите ввод: ");
     end = input(verifer_end, converter, "Введите конец диапазона: ", "Конец диапазона должен быть больше начала: ");
-//    Timer timer;
-//    auto answer = find_all_numbers(begin, end);
-//    timer.mark();
-//    auto time = timer.get_points()[0];
-//    std::cout << "Потребовалось ";
-//    if (time > 60){
-//        std::cout << time/60 << " минут ";
-//        time %= 60;
-//    }
-//    std::cout << time << " секунд\n";
-//    if (!answer.empty()){
-//        for (auto & it : answer){
-//            std::cout << it.first << " наибольший множитель: " << it.second << '\n';
-//        }
-//    }
-//    else std::cout << "Однопоток не нашёл ни одного подходящего числа\n";
-//    timer.reset();
+    Timer timer;
+    auto answer = find_all_numbers(begin, end);
+    timer.mark();
+    auto time = timer.get_points()[0];
+    std::cout << "Однопотоку потребовалось ";
+    if (time > 60){
+        std::cout << time/60 << " минут ";
+        time %= 60;
+    }
+    std::cout << time << " секунд\n";
+    if (!answer.empty()){
+        for (auto & it : answer){
+            std::cout << it.first << " наибольший множитель: " << it.second << '\n';
+        }
+    }
+    else std::cout << "Однопоток не нашёл ни одного подходящего числа\n";
+    timer.reset();
     Thread_Pool tp(begin, end);
+    time = tp.get_work_time();
+    std::cout << "Многопотоку потребовалось ";
+    if (time > 60){
+        std::cout << time/60 << " минут ";
+        time %= 60;
+    }
+    std::cout << time << " секунд\n";
     Console console(tp);
     console.start();
 }

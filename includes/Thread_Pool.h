@@ -11,6 +11,7 @@
 #include <sstream>
 #include <set>
 #include <future>
+#include "Timer.h"
 long long have_3_uniq_dividers(long long number){
     std::set<long long> dividers;
     long long old_number = number;
@@ -62,8 +63,9 @@ protected:
         long long end = end_section[number_thread];
         return ::find_all_numbers(begin, end);
     }
+    Timer timer;
 public:
-    Thread_Pool(const long long& begin, const long long& end, short n = std::thread::hardware_concurrency() - 1): all_begin(begin), all_end(end), n(n){
+    Thread_Pool(const long long& begin, const long long& end, short n = std::thread::hardware_concurrency() - 7): all_begin(begin), all_end(end), n(n){
         answers.reserve(n);
         begin_section.resize(n);
         end_section.resize(n);
@@ -78,6 +80,10 @@ public:
         for (int i = 0; i < n; i++){
             answers.emplace_back(std::async(std::launch::async, &Thread_Pool::find_all_numbers, this, i));
         }
+        for (auto & it : answers){
+            it.wait();
+        }
+        timer.mark();
     }
     std::vector<std::vector<std::pair<long long , long long>>> get_answers() {
         std::vector<std::vector<std::pair<long long, long long>>> real_answers;
@@ -92,6 +98,9 @@ public:
             return answers[i].get();
         }
         else throw std::invalid_argument("");
+    }
+    time_t get_work_time(){
+        return timer.get_points()[0];
     }
 };
 #endif //YMPTHREADS_THREAD_POOL_H

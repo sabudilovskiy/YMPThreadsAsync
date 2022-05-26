@@ -11,7 +11,6 @@
 class Console{
 protected:
     Thread_Pool& tp;
-    Timer timer;
     enum COMMANDS{
         EXIT,
 //        INFO_ALL,
@@ -52,8 +51,7 @@ protected:
                     }
                 }
                 else std::cout << "Пока не найдено ни одного подходящего числа\n";
-                timer.mark();
-                auto time = timer.get_points()[0];
+                auto time = tp.get_work_time();
                 std::cout << "Потребовалось ";
                 if (time > 60){
                     std::cout << time/60 << " минут ";
